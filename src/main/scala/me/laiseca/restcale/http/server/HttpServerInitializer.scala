@@ -1,13 +1,11 @@
-package me.laiseca.restcale
+package me.laiseca.restcale.http.server
 
 import io.netty.channel.ChannelInitializer
-import io.netty.channel.socket.SocketChannel
 import io.netty.channel.ChannelPipeline
-import javax.net.ssl.SSLEngine
-import io.netty.handler.codec.http.HttpResponseEncoder
-import io.netty.handler.codec.http.HttpRequestDecoder
-import io.netty.handler.ssl.SslHandler
+import io.netty.channel.socket.SocketChannel
 import io.netty.handler.codec.http.HttpObjectAggregator
+import io.netty.handler.codec.http.HttpRequestDecoder
+import io.netty.handler.codec.http.HttpResponseEncoder
 
 class HttpServerInitializer extends ChannelInitializer[SocketChannel] {
   override def initChannel(channel: SocketChannel): Unit = {

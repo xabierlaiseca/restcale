@@ -1,4 +1,4 @@
-package me.laiseca.restcale
+package me.laiseca.restcale.http.server
 
 import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.channel.ChannelHandlerContext
