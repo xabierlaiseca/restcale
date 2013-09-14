@@ -10,7 +10,7 @@ import me.laiseca.restcale.http.POST_METHOD
 import me.laiseca.restcale.http.PUT_METHOD
 import me.laiseca.restcale.http.DELETE_METHOD
 
-class RestServiceSpec extends FlatSpec with ShouldMatchers with MockitoSugar {
+class RestServiceSpec extends FlatSpec with ShouldMatchers {
   val path = "/test/path"
   
   "The GET method" should "create a BaseRestFunction with the given information" in {
