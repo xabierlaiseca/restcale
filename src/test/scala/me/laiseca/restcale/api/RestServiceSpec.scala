@@ -1,16 +1,17 @@
 package me.laiseca.restcale.api
 
-import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.mock.MockitoSugar
+import scala.language.reflectiveCalls
+
 import org.scalatest.FlatSpec
+import org.scalatest.Matchers
+
+import me.laiseca.restcale.function.BaseRestFunction
+import me.laiseca.restcale.http.DELETE_METHOD
 import me.laiseca.restcale.http.GET_METHOD
-import me.laiseca.restcale.function.BaseRestFunction
-import me.laiseca.restcale.function.BaseRestFunction
 import me.laiseca.restcale.http.POST_METHOD
 import me.laiseca.restcale.http.PUT_METHOD
-import me.laiseca.restcale.http.DELETE_METHOD
 
-class RestServiceSpec extends FlatSpec with ShouldMatchers {
+class RestServiceSpec extends FlatSpec with Matchers {
   val path = "/test/path"
   
   "The GET method" should "create a BaseRestFunction with the given information" in {
@@ -22,11 +23,11 @@ class RestServiceSpec extends FlatSpec with ShouldMatchers {
     
     val baseRestFunction = testObj.getMethod.asInstanceOf[BaseRestFunction]
     
-    expect(GET_METHOD) {
+    assertResult(GET_METHOD) {
       baseRestFunction.method
     }
     
-    expect(path) {
+    assertResult(path) {
       baseRestFunction.path
     }
   }
@@ -40,11 +41,11 @@ class RestServiceSpec extends FlatSpec with ShouldMatchers {
     
     val baseRestFunction = testObj.getMethod.asInstanceOf[BaseRestFunction]
     
-    expect(POST_METHOD) {
+    assertResult(POST_METHOD) {
       baseRestFunction.method
     }
     
-    expect(path) {
+    assertResult(path) {
       baseRestFunction.path
     }
   }
@@ -58,11 +59,11 @@ class RestServiceSpec extends FlatSpec with ShouldMatchers {
     
     val baseRestFunction = testObj.getMethod.asInstanceOf[BaseRestFunction]
     
-    expect(PUT_METHOD) {
+    assertResult(PUT_METHOD) {
       baseRestFunction.method
     }
     
-    expect(path) {
+    assertResult(path) {
       baseRestFunction.path
     }
   }
@@ -76,11 +77,11 @@ class RestServiceSpec extends FlatSpec with ShouldMatchers {
     
     val baseRestFunction = testObj.getMethod.asInstanceOf[BaseRestFunction]
     
-    expect(DELETE_METHOD) {
+    assertResult(DELETE_METHOD) {
       baseRestFunction.method
     }
     
-    expect(path) {
+    assertResult(path) {
       baseRestFunction.path
     }
   }

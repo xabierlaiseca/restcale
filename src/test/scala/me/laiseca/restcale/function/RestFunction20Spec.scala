@@ -2,12 +2,12 @@ package me.laiseca.restcale.function
 
 import org.mockito.Mockito.verify
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.scalatest.mock.MockitoSugar
 
 import me.laiseca.restcale.http.GET_METHOD
 
-class RestFunction20Spec extends FlatSpec with ShouldMatchers with MockitoSugar {
+class RestFunction20Spec extends FlatSpec with Matchers with MockitoSugar {
   
   val method = GET_METHOD
   val path = "/some/path"
