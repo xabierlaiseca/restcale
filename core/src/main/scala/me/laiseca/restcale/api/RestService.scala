@@ -1,5 +1,7 @@
 package me.laiseca.restcale.api
 
+import scala.reflect.runtime.{universe => ru}
+import scala.reflect.runtime.universe._
 import me.laiseca.restcale.function.RestFunction4
 import me.laiseca.restcale.function.RestFunction20
 import me.laiseca.restcale.function.RestFunction18
@@ -28,9 +30,16 @@ import me.laiseca.restcale.http.DELETE_METHOD
 import me.laiseca.restcale.function.RestFunction6
 import me.laiseca.restcale.function.RestFunction13
 import me.laiseca.restcale.http.HttpMethod
+import me.laiseca.restcale.function.RestFunction1
+
+import scala.reflect.macros.Context
+import me.laiseca.restcale.http.HttpMethod
 
 trait RestService {
-  def GET[R](path:String)(f: => R):R = {
+  def GET[R: ru.TypeTag](path:String)(f: => R):R = {
+    val typeTag = ru.typeTag[R]
+    println(manifest.runtimeClass)
+    manifest.wrap
     wrap(f, GET_METHOD, path)
   }
   
@@ -91,5 +100,11 @@ trait RestService {
     }
     
     wrapper.asInstanceOf[R]
+  }
+}
+
+object RestService {
+  def wrap[R](c: Context)(func: c.Expr[() => R], method: c.Expr[HttpMethod], path: c.Expr[String]) = {
+    
   }
 }
