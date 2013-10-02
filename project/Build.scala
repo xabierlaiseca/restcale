@@ -26,6 +26,8 @@ object RestcaleBuild extends Build {
   )
 
   lazy val macrosDeps = Seq(
+    scalatest,
+    mockito
   )
 
   lazy val sharedDeps = Seq(
@@ -37,7 +39,7 @@ object RestcaleBuild extends Build {
     "root",
     file("."),
     settings = buildSettings
-  ) aggregate(macros, core)
+  ) aggregate(macros, core, shared, example)
 
   lazy val shared: Project = Project(
     "shared",
