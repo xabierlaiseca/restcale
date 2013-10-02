@@ -15,7 +15,6 @@ object RestcaleBuild extends Build {
   
   val netty = "io.netty" % "netty-all" % "4.0.7.Final"
   val config = "com.typesafe" % "config" % "1.0.2"
-  val jersey = "com.sun.jersey" % "jersey-core" % "1.17.1"
   val scalatest = "org.scalatest" % "scalatest_2.10" % "2.0.M6" % "test"
   val mockito = "org.mockito" % "mockito-core" % "1.9.5" % "test"
   
@@ -27,7 +26,6 @@ object RestcaleBuild extends Build {
   )
 
   lazy val macrosDeps = Seq(
-    jersey
   )
 
   lazy val sharedDeps = Seq(
