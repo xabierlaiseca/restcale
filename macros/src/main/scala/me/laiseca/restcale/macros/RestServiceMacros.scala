@@ -5,7 +5,7 @@ import scala.reflect.macros.Context
 import me.laiseca.restcale.internal.function.BaseRestFunction
 import me.laiseca.restcale.http.HttpMethod
 
-object Macros {
+object RestServiceMacros {
   
   val BASE_CLASS_NAME = classOf[BaseRestFunction].getPackage().getName() + ".RestFunction"
   
