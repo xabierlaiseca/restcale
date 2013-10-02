@@ -9,14 +9,15 @@ object Macros {
   
   val BASE_CLASS_NAME = classOf[BaseRestFunction].getPackage().getName() + ".RestFunction"
   
-  def get[R: c.WeakTypeTag](c: Context)
-  	  (path:c.Expr[String])(f:c.Expr[R]) = {
+  def delete[R](c: Context)(path:c.Expr[String])(f:c.Expr[R]) = {
+    buildFunction(c)(f, path, HttpMethod.DELETE)
+  }
+  def get[R](c: Context)(path:c.Expr[String])(f:c.Expr[R]) = {
     buildFunction(c)(f, path, HttpMethod.GET)
   }
   
-  def delete[R: c.WeakTypeTag](c: Context)
-  (path:c.Expr[String])(f:c.Expr[R]) = {
-	  buildFunction(c)(f, path, HttpMethod.DELETE)
+  def patch[R](c: Context)(path:c.Expr[String])(f:c.Expr[R]) = {
+    buildFunction(c)(f, path, HttpMethod.PATCH)
   }
   
   def post[R: c.WeakTypeTag](c: Context)
