@@ -59,4 +59,10 @@ object RestcaleBuild extends Build {
     file("core"),
     settings = buildSettings ++ Seq( libraryDependencies ++= coreDeps )
   ) dependsOn(shared, macros)
+
+  lazy val example: Project = Project(
+    "example",
+    file("example"),
+    settings = buildSettings
+  ) dependsOn(core)
 }
