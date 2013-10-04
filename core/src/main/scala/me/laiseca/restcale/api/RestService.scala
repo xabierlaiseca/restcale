@@ -4,6 +4,7 @@ import language.experimental.macros
 import me.laiseca.restcale.macros.RestServiceMacros
 
 trait RestService {
+  val path = ""
   
   def DELETE[R](path:String)(f: => R) = macro RestServiceMacros.delete[R]
   def GET[R](path:String)(f: => R) = macro RestServiceMacros.get[R]

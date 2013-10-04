@@ -3,12 +3,14 @@ package me.laiseca.restcale.example.rest
 import me.laiseca.restcale.api.RestService
 
 class UserResource extends RestService {
+  
+  override val path = "/user"
 	
-  def get = GET("/user/:id") { id:Int =>
+  def get = GET("/:id") { id:Int =>
     id
   }
   
-  def get2 = GET("/user/:id") { (a:Float, b:Int) =>
+  def post = POST("/:id") { (a:Float, b:Int) =>
     a + b
   }
 }

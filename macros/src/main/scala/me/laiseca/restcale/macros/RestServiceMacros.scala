@@ -43,8 +43,27 @@ object RestServiceMacros {
   private def buildFunction[R](c: Context)(f:c.Expr[R], path:c.Expr[String], method: String) = {
     import c.universe._
     
+    def basePath() = {
+      def matches(tree: c.Tree) = {
+        val name = newTermName("path")
+        tree match {
+          case ValDef(_, name, TypeTree(), Literal(Constant(_))) => true
+          case _ => false
+        }
+      }
+      val matchee = c.enclosingClass.find(matches)
+      
+      if(matchee.isDefined) {
+        val ValDef(_,_,_, Literal(Constant(basePath:String))) = matchee.get
+        basePath
+      } else {
+        ""
+      }
+    }
+    
     def validateUrl(pathExpr:c.Expr[String], method:String) = {
-      val Literal(Constant(path:String)) = pathExpr.tree
+      val Literal(Constant(relativePath:String)) = pathExpr.tree
+      val path = basePath + relativePath
       val pathPatterns = pathPatternsByMethod.getOrElse(method, null)
       val paramPattern = ":[^/]+".r
       val pathPattern = paramPattern.replaceAllIn(path, "<wildcard>")
