@@ -7,15 +7,16 @@ import me.laiseca.restcale.http.HttpMethod
 import scala.collection.mutable.HashSet
 import scala.collection.mutable.Set
 import scala.collection.immutable.HashMap
+import me.laiseca.restcale.internal.function.RestFunction0
 
 object RestServiceMacros {
   
   private val pathPatternsByMethod = HashMap[String, Set[String]](
-      HttpMethod.DELETE -> HashSet(),
-      HttpMethod.GET -> HashSet(),
-      HttpMethod.PATCH -> HashSet(),
-      HttpMethod.POST -> HashSet(),
-      HttpMethod.PUT -> HashSet())
+      HttpMethod.DELETE -> HashSet[String](),
+      HttpMethod.GET -> HashSet[String](),
+      HttpMethod.PATCH -> HashSet[String](),
+      HttpMethod.POST -> HashSet[String](),
+      HttpMethod.PUT -> HashSet[String]())
   
   val BASE_CLASS_NAME = classOf[BaseRestFunction].getPackage().getName() + ".RestFunction"
   
@@ -43,22 +44,12 @@ object RestServiceMacros {
   private def buildFunction[R](c: Context)(f:c.Expr[R], path:c.Expr[String], method: String) = {
     import c.universe._
     
-    def basePath() = {
-      def matches(tree: c.Tree) = {
-        val name = newTermName("path")
-        tree match {
-          case ValDef(_, name, TypeTree(), Literal(Constant(_))) => true
-          case _ => false
-        }
+    def basePath():String = {
+      val pathList = c.enclosingClass.collect {
+        case ValDef(_, name, TypeTree(), Literal(Constant(path:String))) => path
       }
-      val matchee = c.enclosingClass.find(matches)
       
-      if(matchee.isDefined) {
-        val ValDef(_,_,_, Literal(Constant(basePath:String))) = matchee.get
-        basePath
-      } else {
-        ""
-      }
+      if (pathList.size > 0) pathList(0) else ""
     }
     
     def validateUrl(pathExpr:c.Expr[String], method:String) = {
@@ -74,13 +65,13 @@ object RestServiceMacros {
         pathPatterns add pathPattern
       }
     }
-    
+
     validateUrl(path, method)
     
     val TypeRef(thisType, _, args) = f.tree.tpe
     val clazz = c.mirror.staticClass(BASE_CLASS_NAME + (args.size - 1) )
     val clazzType = TypeRef(thisType, clazz , args)
-    
+
     c.Expr[BaseRestFunction](Apply(
       Select(
         New(TypeTree().setType(clazzType)),
