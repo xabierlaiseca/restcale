@@ -2,17 +2,14 @@ package me.laiseca.restcale.config
 
 import scala.collection.JavaConversions._
 import scala.collection.immutable.List
-import com.typesafe.config.ConfigFactory
-import com.typesafe.config.Config
 
-class RestcaleConfig(val endpointClasses:List[Class[_]])
+import com.typesafe.config.ConfigFactory
+
+class RestcaleConfig(val endpointClasses:List[String])
 
 class ConfigLoader() {
-  def load(file:String = "restcale"):RestcaleConfig = {
+  def load(file:String = "restcale.conf"):RestcaleConfig = {
     val config = ConfigFactory.load(file)
-    val endpointClasses = config.getStringList("restcale.endpoints")
-    	.toList.map(Class.forName(_))
-    
-    new RestcaleConfig(endpointClasses)
+    new RestcaleConfig(config.getStringList("restcale.endpoints").toList)
   }
 }

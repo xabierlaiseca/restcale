@@ -5,9 +5,9 @@ import org.scalatest.Matchers
 
 class ConfigLoaderSpec extends FlatSpec with Matchers {
 	"the config loader" should "load the expected endpoint classes" in {
-	  val config = new ConfigLoader().load("config/restcale.test.conf")
+	  val config = new ConfigLoader().load("config/restcale.test")
 	  
-	  assertResult(List[Class[_]](classOf[EndpointA], classOf[EndpointB], classOf[EndpointC])){
+	  assertResult(List(classOf[EndpointA].getName(), classOf[EndpointB].getName(), classOf[EndpointC].getName())){
 	    config.endpointClasses
 	  }
 	}
