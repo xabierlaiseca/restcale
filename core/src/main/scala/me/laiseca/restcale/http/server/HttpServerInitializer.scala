@@ -6,8 +6,9 @@ import io.netty.channel.socket.SocketChannel
 import io.netty.handler.codec.http.HttpObjectAggregator
 import io.netty.handler.codec.http.HttpRequestDecoder
 import io.netty.handler.codec.http.HttpResponseEncoder
+import me.laiseca.restcale.router.Router
 
-class HttpServerInitializer extends ChannelInitializer[SocketChannel] {
+class HttpServerInitializer(val router: Router) extends ChannelInitializer[SocketChannel] {
   override def initChannel(channel: SocketChannel): Unit = {
     val p:ChannelPipeline = channel.pipeline()
 
@@ -17,6 +18,6 @@ class HttpServerInitializer extends ChannelInitializer[SocketChannel] {
     p.addLast("decoder", new HttpRequestDecoder())
     p.addLast("aggregator", new HttpObjectAggregator(1048576))
     p.addLast("encoder", new HttpResponseEncoder())
-    p.addLast("handler", new HttpServerHandler())
+    p.addLast("handler", new HttpServerHandler(router))
   }
 }

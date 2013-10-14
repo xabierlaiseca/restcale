@@ -11,8 +11,9 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.netty.buffer.ByteBuf
 import io.netty.util.CharsetUtil
 import io.netty.channel.ChannelFutureListener
+import me.laiseca.restcale.router.Router
 
-class HttpServerHandler extends SimpleChannelInboundHandler[AnyRef] {
+class HttpServerHandler(val router:Router) extends SimpleChannelInboundHandler[AnyRef] {
 	val CONTENT:ByteBuf = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(
                 "<html><head><title>Hello Netty & Scala World</title></head><body>Hello Netty & Scala World!!</body></html>",
                 CharsetUtil.UTF_8))
@@ -25,7 +26,9 @@ class HttpServerHandler extends SimpleChannelInboundHandler[AnyRef] {
 		val request:HttpRequest = msg.asInstanceOf[HttpRequest]
 
 		val keepAlive = HttpHeaders.isKeepAlive(request)
-		val response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, CONTENT.duplicate())
+		val content = router.route(request)
+		val buffer = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(content.toString, CharsetUtil.UTF_8))
+		val response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, buffer)
 
 		response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "text/html; charset=UTF-8");
 		response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, response.content().readableBytes());
@@ -37,7 +40,6 @@ class HttpServerHandler extends SimpleChannelInboundHandler[AnyRef] {
 			ctx.write(response).addListener(ChannelFutureListener.CLOSE)
 		}
 	}
-
 
 	override def exceptionCaught(ctx:ChannelHandlerContext, cause:Throwable):Unit = {
 		cause.printStackTrace()
