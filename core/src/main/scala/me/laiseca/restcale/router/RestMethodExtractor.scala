@@ -4,6 +4,7 @@ import scala.reflect.runtime.{universe => ru}
 import scala.reflect.runtime.universe._
 import me.laiseca.restcale.internal.function.BaseRestFunction
 import me.laiseca.restcale.api.RestService
+import me.laiseca.restcale.util.PathUtils
 
 class RestMethodExtractor {
   private val m = ru.runtimeMirror(this.getClass().getClassLoader)
@@ -21,7 +22,7 @@ class RestMethodExtractor {
   
   private def buildRoute(pathString: String):List[RouteSegment] = {
     for {
-      segmentString <- pathString.split("/").filter(!_.isEmpty()).toList
+      segmentString <- PathUtils.split(pathString)
     } yield {
       if(segmentString startsWith ":") {
         new WildcardRouteSegment(segmentString.substring(1))

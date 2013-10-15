@@ -1,9 +1,9 @@
 package me.laiseca.restcale.router
 
 import scala.collection.mutable
-
 import io.netty.handler.codec.http.HttpRequest
 import me.laiseca.restcale.methodcall.MethodCaller
+import me.laiseca.restcale.util.PathUtils
 
 class Router(private val restMethods:List[RestMethod], private val caller: MethodCaller) {
   private val routes: Map[String, RouteMap] = initRoutes
@@ -74,7 +74,7 @@ class Router(private val restMethods:List[RestMethod], private val caller: Metho
     }
     
     val routesForHttpMethod = httpMethodRoutes(httpMethod)
-    val segments = path.split("/").filterNot(_.isEmpty).toList
+    val segments = PathUtils.split(path)
     val method = methodToCall(routesForHttpMethod, segments)
     if(method.isDefined) {
       caller.call(method.get, request)
