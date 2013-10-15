@@ -88,9 +88,9 @@ class Router(private val restMethods:List[RestMethod], private val caller: Metho
 
     def toImmutable():RouteMap = new RouteMap(method, this.toMap.flatMap(entry => List(entry._1 -> entry._2.toImmutable)))
   }
-  
-  private class RouteMap(val method:Option[RestMethod], val routes: Map[RouteSegment, RouteMap])
 }
+
+class RouteMap(val method:Option[RestMethod], val routes: Map[RouteSegment, RouteMap])
 
 object Router {
   val WILDCARD = new WildcardRouteSegment(null)
