@@ -1,29 +1,18 @@
 package me.laiseca.restcale.router
 
-abstract class RouteSegment(val segment:String) 
+abstract class RouteSegment 
 
-class FixedRouteSegment(segment:String) extends RouteSegment(segment) with Equals {
+class FixedRouteSegment(val routeSegment:String) extends RouteSegment with Equals {
   def canEqual(other: Any) = {
     other.isInstanceOf[FixedRouteSegment]
   }
   
   override def equals(o:Any):Boolean = o match {
-    case that: FixedRouteSegment => that.canEqual(FixedRouteSegment.this) && segment == that.segment
+    case that: FixedRouteSegment => that.canEqual(FixedRouteSegment.this) && routeSegment == that.routeSegment
     case _ => false
   }
   
-  override def hashCode:Int = segment.hashCode
+  override def hashCode:Int = routeSegment.hashCode
 }
 
-class WildcardRouteSegment(segment:String) extends RouteSegment(segment) with Equals {
-  def canEqual(other: Any) = {
-    other.isInstanceOf[WildcardRouteSegment]
-  }
-  
-  override def equals(o:Any): Boolean = o match {
-    case that:WildcardRouteSegment => that.canEqual(WildcardRouteSegment.this)
-    case _ => false
-  }
-  
-  override def hashCode:Int = classOf[WildcardRouteSegment].hashCode
-}
+object WildcardRouteSegment extends RouteSegment

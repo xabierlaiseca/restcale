@@ -16,7 +16,7 @@ class RouterSpec extends FlatSpec with Matchers with MockitoSugar {
   val restMethods = List(
       new RestMethod(null, null, "GET", List(new FixedRouteSegment("method1"))),
       new RestMethod(null, null, "POST", List(new FixedRouteSegment("method1"))),
-      new RestMethod(null, null, "GET", List(new FixedRouteSegment("method1"), new WildcardRouteSegment("id")))
+      new RestMethod(null, null, "GET", List(new FixedRouteSegment("method1"), WildcardRouteSegment))
   )
   
   "when the enpoint with fixed segments is called the router" should "delegate the call to the caller" in {
@@ -70,4 +70,3 @@ class RouterSpec extends FlatSpec with Matchers with MockitoSugar {
     }
   }
 }
-

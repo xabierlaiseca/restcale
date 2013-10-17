@@ -25,7 +25,7 @@ class RestMethodExtractor {
       segmentString <- PathUtils.split(pathString)
     } yield {
       if(segmentString startsWith ":") {
-        new WildcardRouteSegment(segmentString.substring(1))
+        WildcardRouteSegment
       } else {
         new FixedRouteSegment(segmentString)
       }

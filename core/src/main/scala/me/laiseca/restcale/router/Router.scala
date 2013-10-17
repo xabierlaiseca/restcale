@@ -1,6 +1,7 @@
 package me.laiseca.restcale.router
 
 import scala.collection.mutable
+
 import io.netty.handler.codec.http.HttpRequest
 import me.laiseca.restcale.methodcall.MethodCaller
 import me.laiseca.restcale.util.PathUtils
@@ -56,7 +57,7 @@ class Router(private val restMethods:List[RestMethod], private val caller: Metho
       if(subroutes.isDefined) {
         subroutes
       } else {
-        routes.routes get Router.WILDCARD
+        routes.routes get WildcardRouteSegment
       }
     }
     
@@ -91,8 +92,3 @@ class Router(private val restMethods:List[RestMethod], private val caller: Metho
 }
 
 class RouteMap(val method:Option[RestMethod], val routes: Map[RouteSegment, RouteMap])
-
-object Router {
-  val WILDCARD = new WildcardRouteSegment(null)
-}
-

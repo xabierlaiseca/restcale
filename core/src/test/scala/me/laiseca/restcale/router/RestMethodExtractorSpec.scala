@@ -20,7 +20,7 @@ class RestMethodExtractorSpec extends FlatSpec with Matchers with Inside {
       service should be (service)
       method should be (ru.typeOf[DefRestService].declaration(ru.newTermName("restMethodDef")).asMethod)
       httpMethod should be ("GET")
-      route should be (List(new FixedRouteSegment("urla"), new WildcardRouteSegment("a")))
+      route should be (List(new FixedRouteSegment("urla"), WildcardRouteSegment))
     }
   }
   
@@ -36,7 +36,7 @@ class RestMethodExtractorSpec extends FlatSpec with Matchers with Inside {
       service should be (service)
       method should be (ru.typeOf[ValRestService].declaration(ru.newTermName("restMethodVal")).asMethod)
       httpMethod should be ("POST")
-      route should be (List(new FixedRouteSegment("urlb"), new WildcardRouteSegment("b")))
+      route should be (List(new FixedRouteSegment("urlb"), WildcardRouteSegment))
     }
   }
   
