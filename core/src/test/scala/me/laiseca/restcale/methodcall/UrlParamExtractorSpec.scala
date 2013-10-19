@@ -16,7 +16,7 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
     testObj = new UrlParamExtractor("/methond/:" + PARAM_NAME)
   }
   
-  "given a method byte parameter the url extractor" should "return the byte value given in the url path" in {
+  "given a byte parameter the url extractor" should "return the byte value given in the url path" in {
     val request:HttpRequest = mock[HttpRequest]
     when(request.getUri()).thenReturn("/method/10")
     
@@ -25,7 +25,7 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
     }
   }
   
-  "given a method short parameter the url extractor" should "return the short value given in the url path" in {
+  "given a short parameter the url extractor" should "return the short value given in the url path" in {
     val request:HttpRequest = mock[HttpRequest]
     when(request.getUri()).thenReturn("/method/10")
     
@@ -34,7 +34,7 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
     }
   }
 
-  "given a method int parameter the url extractor" should "return the int value given in the url path" in {
+  "given a int parameter the url extractor" should "return the int value given in the url path" in {
     val request:HttpRequest = mock[HttpRequest]
     when(request.getUri()).thenReturn("/method/10")
     
@@ -43,7 +43,7 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
     }
   }
   
-  "given a method long parameter the url extractor" should "return the long value given in the url path" in {
+  "given a long parameter the url extractor" should "return the long value given in the url path" in {
     val request:HttpRequest = mock[HttpRequest]
     when(request.getUri()).thenReturn("/method/10")
     
@@ -52,7 +52,7 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
     }
   }
   
-  "given a method float parameter the url extractor" should "return the float value given in the url path" in {
+  "given a float parameter the url extractor" should "return the float value given in the url path" in {
     val request:HttpRequest = mock[HttpRequest]
     when(request.getUri()).thenReturn("/method/10")
     
@@ -61,7 +61,7 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
     }
   }
   
-  "given a method double parameter the url extractor" should "return the double value given in the url path" in {
+  "given a double parameter the url extractor" should "return the double value given in the url path" in {
     val request:HttpRequest = mock[HttpRequest]
     when(request.getUri()).thenReturn("/method/10")
     
@@ -70,7 +70,7 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
     }
   }
   
-  "given a method char parameter the url extractor" should "return the char value given in the url path" in {
+  "given a char parameter the url extractor" should "return the char value given in the url path" in {
     val request:HttpRequest = mock[HttpRequest]
     when(request.getUri()).thenReturn("/method/c")
     
@@ -79,7 +79,7 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
     }
   }
   
-  "given a method string parameter the url extractor" should "return the string value given in the url path" in {
+  "given a string parameter the url extractor" should "return the string value given in the url path" in {
     val request:HttpRequest = mock[HttpRequest]
     when(request.getUri()).thenReturn("/method/something")
     
@@ -88,7 +88,7 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
     }
   }
   
-  "given a method boolean parameter the url extractor" should "return the boolean value given in the url path" in {
+  "given a boolean parameter the url extractor" should "return the boolean value given in the url path" in {
     val request:HttpRequest = mock[HttpRequest]
     when(request.getUri()).thenReturn("/method/true")
     
@@ -96,4 +96,15 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
 	  testObj.extractParam(PARAM_NAME, ru.typeTag[Boolean], request).get
     }
   }
+  
+  "given a not supported type parameter the url extractor" should "return an empty value" in {
+    val request:HttpRequest = mock[HttpRequest]
+    when(request.getUri()).thenReturn("/method/notsupported")
+    
+    assertResult(Option.empty){
+	  testObj.extractParam(PARAM_NAME, ru.typeTag[NotSupportedType], request)
+    }
+  }
+
+  class NotSupportedType
 }
