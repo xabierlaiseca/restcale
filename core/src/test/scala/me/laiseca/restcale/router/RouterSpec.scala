@@ -1,15 +1,19 @@
 package me.laiseca.restcale.router
 
+import scala.reflect.runtime.{universe => ru}
+import scala.reflect.runtime.universe._
+
+import org.mockito.Mockito
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfter
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import org.scalatest.mock.MockitoSugar
-import me.laiseca.restcale.methodcall.MethodCaller
-import io.netty.handler.codec.http.HttpRequest
-import org.mockito.Mockito
+
 import io.netty.handler.codec.http.HttpMethod
+import io.netty.handler.codec.http.HttpRequest
+import me.laiseca.restcale.methodcall.MethodCaller
 
 class RouterSpec extends FlatSpec with Matchers with MockitoSugar {
 
