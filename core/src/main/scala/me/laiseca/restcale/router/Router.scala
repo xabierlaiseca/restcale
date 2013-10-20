@@ -1,10 +1,9 @@
 package me.laiseca.restcale.router
 
 import scala.collection.mutable
-
-import io.netty.handler.codec.http.HttpRequest
 import me.laiseca.restcale.methodcall.MethodCaller
 import me.laiseca.restcale.util.PathUtils
+import me.laiseca.restcale.http.HttpRequest
 
 class Router(private val restMethods:List[RestMethod], private val caller: MethodCaller) {
   private val routes: Map[String, RouteMap] = initRoutes
@@ -37,10 +36,9 @@ class Router(private val restMethods:List[RestMethod], private val caller: Metho
   }
   
   def route(request:HttpRequest):Any = {
-	val httpMethod = request.getMethod.name.toUpperCase
-    val path = request.getUri
     
-    def throwRouteNotFoundException() = throw new RouteNotFoundException(String.format("No route found for %s %s", httpMethod, path))
+    def throwRouteNotFoundException() = throw new RouteNotFoundException(String.format(
+        "No route found for %s %s", request.method, request.path))
 			
     def httpMethodRoutes(httpMethod:String):RouteMap = {
       val subroutes = routes get httpMethod
@@ -74,8 +72,8 @@ class Router(private val restMethods:List[RestMethod], private val caller: Metho
       }
     }
     
-    val routesForHttpMethod = httpMethodRoutes(httpMethod)
-    val segments = PathUtils.split(path)
+    val routesForHttpMethod = httpMethodRoutes(request.method)
+    val segments = PathUtils.split(request.path)
     val method = methodToCall(routesForHttpMethod, segments)
     if(method.isDefined) {
       caller.call(method.get, request)

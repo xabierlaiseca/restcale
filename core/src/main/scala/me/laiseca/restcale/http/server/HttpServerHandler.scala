@@ -26,7 +26,7 @@ class HttpServerHandler(val router:Router) extends SimpleChannelInboundHandler[A
 		val request:HttpRequest = msg.asInstanceOf[HttpRequest]
 
 		val keepAlive = HttpHeaders.isKeepAlive(request)
-		val content = router.route(request)
+		val content = router.route(new me.laiseca.restcale.http.HttpRequest(request))
 		val buffer = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(content.toString, CharsetUtil.UTF_8))
 		val response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, buffer)
 

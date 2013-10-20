@@ -2,7 +2,6 @@ package me.laiseca.restcale.router
 
 import scala.reflect.runtime.{universe => ru}
 import scala.reflect.runtime.universe._
-
 import org.mockito.Mockito
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.when
@@ -10,10 +9,8 @@ import org.scalatest.BeforeAndAfter
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import org.scalatest.mock.MockitoSugar
-
-import io.netty.handler.codec.http.HttpMethod
-import io.netty.handler.codec.http.HttpRequest
 import me.laiseca.restcale.methodcall.MethodCaller
+import me.laiseca.restcale.http.HttpRequest
 
 class RouterSpec extends FlatSpec with Matchers with MockitoSugar {
 
@@ -27,8 +24,8 @@ class RouterSpec extends FlatSpec with Matchers with MockitoSugar {
     val caller = mock[MethodCaller]
     val request = mock[HttpRequest]
     
-    when(request.getMethod()).thenReturn(HttpMethod.POST)
-    when(request.getUri()).thenReturn("/method1")
+    when(request.method).thenReturn("POST")
+    when(request.path).thenReturn("/method1")
     
     val router = new Router(restMethods, caller)
     router.route(request)
@@ -40,8 +37,8 @@ class RouterSpec extends FlatSpec with Matchers with MockitoSugar {
     val caller = mock[MethodCaller]
     val request = mock[HttpRequest]
     
-    when(request.getMethod()).thenReturn(HttpMethod.GET)
-    when(request.getUri()).thenReturn("/method1/10")
+    when(request.method).thenReturn("GET")
+    when(request.path).thenReturn("/method1/10")
     
     val router = new Router(restMethods, caller)
     router.route(request)
@@ -53,7 +50,7 @@ class RouterSpec extends FlatSpec with Matchers with MockitoSugar {
     val caller = mock[MethodCaller]
     val request = mock[HttpRequest]
     
-    when(request.getMethod()).thenReturn(HttpMethod.DELETE)
+    when(request.method).thenReturn("DELETE")
     
     val router = new Router(restMethods, caller)
     intercept[RouteNotFoundException] {
@@ -65,8 +62,8 @@ class RouterSpec extends FlatSpec with Matchers with MockitoSugar {
     val caller = mock[MethodCaller]
     val request = mock[HttpRequest]
     
-    when(request.getMethod()).thenReturn(HttpMethod.GET)
-    when(request.getUri()).thenReturn("/method110")
+    when(request.method).thenReturn("GET")
+    when(request.path).thenReturn("/method110")
     
     val router = new Router(restMethods, caller)
     intercept[RouteNotFoundException] {

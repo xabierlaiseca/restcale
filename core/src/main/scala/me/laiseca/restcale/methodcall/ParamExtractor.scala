@@ -2,18 +2,17 @@ package me.laiseca.restcale.methodcall
 
 import scala.reflect.runtime.{universe => ru}
 import scala.reflect.runtime.universe._
-import io.netty.handler.codec.http.HttpRequest
 import me.laiseca.restcale.util.PathUtils
+import me.laiseca.restcale.http.HttpRequest
 
 trait ParamExtractor {
   def extractParam[T: TypeTag](paramName:String, request:HttpRequest):Option[T]
 }
 
 class UrlParamExtractor(val pathTemplate:String, typeTransformer:TypeTransformer) extends ParamExtractor {
-  
   override def extractParam[T: TypeTag](paramName:String, request:HttpRequest):Option[T] = {
     if(typeTransformer.supports[T]) {
-      val paramStringValue = extractParamStringValue(request.getUri(), paramName)
+      val paramStringValue = extractParamStringValue(request.path, paramName)
       if(paramStringValue.isDefined) {
         return typeTransformer.transform(paramStringValue.get)
       }

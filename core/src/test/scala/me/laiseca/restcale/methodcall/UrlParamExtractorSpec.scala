@@ -5,8 +5,8 @@ import org.mockito.Mockito.when
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import org.scalatest.BeforeAndAfter
-import io.netty.handler.codec.http.HttpRequest
 import org.scalatest.mock.MockitoSugar
+import me.laiseca.restcale.http.HttpRequest
 
 class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar with BeforeAndAfter {
   val PARAM_NAME = "value"
@@ -24,7 +24,7 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
   
   "given a supported type parameter, the url extractor" should "return the value given in the url path" in {
     val request:HttpRequest = mock[HttpRequest]
-    when(request.getUri()).thenReturn("/method/10")
+    when(request.path).thenReturn("/method/10")
     
     assertResult(10){
 	  testObj.extractParam[Int](PARAM_NAME, request).get
@@ -33,7 +33,7 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
   
   "given a not supported type parameter, the url extractor" should "return an empty return value" in {
     val request:HttpRequest = mock[HttpRequest]
-    when(request.getUri()).thenReturn("/method/10")
+    when(request.path).thenReturn("/method/10")
     
     assertResult(Option.empty){
 	  testObj.extractParam[NotSupportedType](PARAM_NAME, request)
@@ -42,7 +42,7 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
 
   "given a not existing param name in url, the url extractor" should "return an empty return value" in {
     val request:HttpRequest = mock[HttpRequest]
-    when(request.getUri()).thenReturn("/method/10")
+    when(request.path).thenReturn("/method/10")
     
     assertResult(Option.empty){
 	  testObj.extractParam[Int](OTHER_PARAM_NAME, request)
