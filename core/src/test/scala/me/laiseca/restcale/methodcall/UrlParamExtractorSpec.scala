@@ -10,101 +10,42 @@ import org.scalatest.mock.MockitoSugar
 
 class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar with BeforeAndAfter {
   val PARAM_NAME = "value"
+  val OTHER_PARAM_NAME = "other"
   var testObj:UrlParamExtractor = _
 
   before {
-    testObj = new UrlParamExtractor("/methond/:" + PARAM_NAME)
+    val extractor = mock[TypeTransformer]
+    when(extractor.supports[NotSupportedType]).thenReturn(false)
+    when(extractor.supports[Int]).thenReturn(true)
+    when(extractor.transform[Int]("10")).thenReturn(Option.apply(10))
+    
+    testObj = new UrlParamExtractor("/method/:" + PARAM_NAME, extractor)
   }
   
-  "given a byte parameter the url extractor" should "return the byte value given in the url path" in {
-    val request:HttpRequest = mock[HttpRequest]
-    when(request.getUri()).thenReturn("/method/10")
-    
-    assertResult(10.toByte){
-	  testObj.extractParam(PARAM_NAME, ru.typeTag[Byte], request).get
-    }
-  }
-  
-  "given a short parameter the url extractor" should "return the short value given in the url path" in {
-    val request:HttpRequest = mock[HttpRequest]
-    when(request.getUri()).thenReturn("/method/10")
-    
-    assertResult(10.toShort){
-	  testObj.extractParam(PARAM_NAME, ru.typeTag[Short], request).get
-    }
-  }
-
-  "given a int parameter the url extractor" should "return the int value given in the url path" in {
+  "given a supported type parameter, the url extractor" should "return the value given in the url path" in {
     val request:HttpRequest = mock[HttpRequest]
     when(request.getUri()).thenReturn("/method/10")
     
     assertResult(10){
-	  testObj.extractParam(PARAM_NAME, ru.typeTag[Int], request).get
+	  testObj.extractParam[Int](PARAM_NAME, request).get
     }
   }
   
-  "given a long parameter the url extractor" should "return the long value given in the url path" in {
+  "given a not supported type parameter, the url extractor" should "return an empty return value" in {
     val request:HttpRequest = mock[HttpRequest]
     when(request.getUri()).thenReturn("/method/10")
-    
-    assertResult(10.toLong){
-	  testObj.extractParam(PARAM_NAME, ru.typeTag[Long], request).get
-    }
-  }
-  
-  "given a float parameter the url extractor" should "return the float value given in the url path" in {
-    val request:HttpRequest = mock[HttpRequest]
-    when(request.getUri()).thenReturn("/method/10")
-    
-    assertResult(10.0.toFloat){
-	  testObj.extractParam(PARAM_NAME, ru.typeTag[Float], request).get
-    }
-  }
-  
-  "given a double parameter the url extractor" should "return the double value given in the url path" in {
-    val request:HttpRequest = mock[HttpRequest]
-    when(request.getUri()).thenReturn("/method/10")
-    
-    assertResult(10.0){
-	  testObj.extractParam(PARAM_NAME, ru.typeTag[Double], request).get
-    }
-  }
-  
-  "given a char parameter the url extractor" should "return the char value given in the url path" in {
-    val request:HttpRequest = mock[HttpRequest]
-    when(request.getUri()).thenReturn("/method/c")
-    
-    assertResult('c'){
-	  testObj.extractParam(PARAM_NAME, ru.typeTag[Char], request).get
-    }
-  }
-  
-  "given a string parameter the url extractor" should "return the string value given in the url path" in {
-    val request:HttpRequest = mock[HttpRequest]
-    when(request.getUri()).thenReturn("/method/something")
-    
-    assertResult("something"){
-	  testObj.extractParam(PARAM_NAME, ru.typeTag[String], request).get
-    }
-  }
-  
-  "given a boolean parameter the url extractor" should "return the boolean value given in the url path" in {
-    val request:HttpRequest = mock[HttpRequest]
-    when(request.getUri()).thenReturn("/method/true")
-    
-    assertResult(true){
-	  testObj.extractParam(PARAM_NAME, ru.typeTag[Boolean], request).get
-    }
-  }
-  
-  "given a not supported type parameter the url extractor" should "return an empty value" in {
-    val request:HttpRequest = mock[HttpRequest]
-    when(request.getUri()).thenReturn("/method/notsupported")
     
     assertResult(Option.empty){
-	  testObj.extractParam(PARAM_NAME, ru.typeTag[NotSupportedType], request)
+	  testObj.extractParam[NotSupportedType](PARAM_NAME, request)
     }
   }
 
-  class NotSupportedType
+  "given a not existing param name in url, the url extractor" should "return an empty return value" in {
+    val request:HttpRequest = mock[HttpRequest]
+    when(request.getUri()).thenReturn("/method/10")
+    
+    assertResult(Option.empty){
+	  testObj.extractParam[Int](OTHER_PARAM_NAME, request)
+    }
+  }
 }
