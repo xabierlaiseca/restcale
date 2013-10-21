@@ -48,8 +48,8 @@ class QueryParamExtractorSpec extends FlatSpec with Matchers with MockitoSugar w
     }
   }
   
-  "when a list parameter of a not supported type is extracted" should "throw an illegal value exception" in {
-    intercept[IllegalValueException] {
+  "when a list parameter of a not supported type is extracted" should "throw an illegal type exception" in {
+    intercept[IllegalParameterTypeException] {
       testObj.extractParam[List[Int]](LIST_PARAM_NAME, request)
     }
   }
@@ -60,8 +60,8 @@ class QueryParamExtractorSpec extends FlatSpec with Matchers with MockitoSugar w
     }
   }
   
-  "when an option parameter of a not supported type is extracted" should "throw an illegal value exception" in {
-    intercept[IllegalValueException] {
+  "when an option parameter of a not supported type is extracted" should "throw an illegal type exception" in {
+    intercept[IllegalParameterTypeException] {
       testObj.extractParam[Option[Int]](SINGLE_PARAM_NAME, request)
     }
   }
@@ -78,8 +78,8 @@ class QueryParamExtractorSpec extends FlatSpec with Matchers with MockitoSugar w
     }
   }
   
-  "when a parameter of a not supported type is extracted" should "throw an illegal value exception" in {
-    intercept[IllegalValueException] {
+  "when a parameter of a not supported type is extracted" should "throw an illegal type exception" in {
+    intercept[IllegalParameterTypeException] {
       testObj.extractParam[Int](SINGLE_PARAM_NAME, request)
     }
   }

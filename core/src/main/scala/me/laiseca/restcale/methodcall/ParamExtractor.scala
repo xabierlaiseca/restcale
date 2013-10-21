@@ -11,13 +11,16 @@ trait ParamExtractor {
 
 class UrlParamExtractor(val pathTemplate:String, typeTransformer:TypeTransformer) extends ParamExtractor {
   override def extractParam[T:TypeTag](paramName:String, request:HttpRequest):Option[T] = {
-    if(typeTransformer.supports[T]) {
-      val paramStringValue = extractParamStringValue(request.path, paramName)
-      if(paramStringValue.isDefined) {
+    val paramStringValue = extractParamStringValue(request.path, paramName)
+    if(paramStringValue.isDefined) {
+      if(typeTransformer.supports[T]) {
         return typeTransformer.transform(paramStringValue.get)
+      } else {
+        throw new IllegalParameterTypeException(paramStringValue.get)
       }
+    } else {
+    	Option.empty
     }
-    Option.empty
   }
   
   private def extractParamStringValue(path:String, paramName:String):Option[String] = {
@@ -63,7 +66,7 @@ class QueryParamExtractor(typeTransformer:TypeTransformer) extends ParamExtracto
     if(typeTransformer.supports(arg)) {
       Option.apply(values.map(typeTransformer.transform(_, arg).get).asInstanceOf[T])
     } else {
-      throw new IllegalValueException(values.toString)
+      throw new IllegalParameterTypeException(values.toString)
     }
   }
   
@@ -73,7 +76,7 @@ class QueryParamExtractor(typeTransformer:TypeTransformer) extends ParamExtracto
     if(typeTransformer.supports(arg)) {
       Option.apply(typeTransformer.transform(values(0), arg).asInstanceOf[T])
     } else {
-    	throw new IllegalValueException(values(0))
+    	throw new IllegalParameterTypeException(values(0))
     }
   }
   
@@ -82,7 +85,7 @@ class QueryParamExtractor(typeTransformer:TypeTransformer) extends ParamExtracto
     if(typeTransformer.supports[T]) {
       typeTransformer.transform[T](values(0))
     } else {
-    	throw new IllegalValueException(values(0))
+    	throw new IllegalParameterTypeException(values(0))
     }
   }
   
@@ -96,7 +99,6 @@ class QueryParamExtractor(typeTransformer:TypeTransformer) extends ParamExtracto
       throw new IllegalValueException(values.toString)
     }
   }
-  
 }
 
 object ParamExtractor {

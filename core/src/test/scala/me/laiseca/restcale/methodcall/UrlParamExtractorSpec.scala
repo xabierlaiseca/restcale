@@ -26,16 +26,16 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
     val request:HttpRequest = mock[HttpRequest]
     when(request.path).thenReturn("/method/10")
     
-    assertResult(10){
+    assertResult(10) {
 	  testObj.extractParam[Int](PARAM_NAME, request).get
     }
   }
   
-  "given a not supported type parameter, the url extractor" should "return an empty return value" in {
+  "given a not supported type parameter, the url extractor" should "throw a illegal type exception" in {
     val request:HttpRequest = mock[HttpRequest]
     when(request.path).thenReturn("/method/10")
     
-    assertResult(Option.empty){
+    intercept[IllegalParameterTypeException] {
 	  testObj.extractParam[NotSupportedType](PARAM_NAME, request)
     }
   }
@@ -44,7 +44,7 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
     val request:HttpRequest = mock[HttpRequest]
     when(request.path).thenReturn("/method/10")
     
-    assertResult(Option.empty){
+    assertResult(Option.empty) {
 	  testObj.extractParam[Int](OTHER_PARAM_NAME, request)
     }
   }
