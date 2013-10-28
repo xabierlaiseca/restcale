@@ -15,9 +15,9 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
 
   before {
     val extractor = mock[TypeTransformer]
-    when(extractor.supports[NotSupportedType]).thenReturn(false)
-    when(extractor.supports[Int]).thenReturn(true)
-    when(extractor.transform[Int]("10")).thenReturn(Option.apply(10))
+    when(extractor.supports(ru.typeOf[NotSupportedType])).thenReturn(false)
+    when(extractor.supports(ru.typeOf[Int])).thenReturn(true)
+    when(extractor.transform("10", ru.typeOf[Int])).thenReturn(Option.apply(10))
     
     testObj = new UrlParamExtractor("/method/:" + PARAM_NAME, extractor)
   }
@@ -27,7 +27,7 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
     when(request.path).thenReturn("/method/10")
     
     assertResult(10) {
-	  testObj.extractParam[Int](PARAM_NAME, request).get
+	  testObj.extractParam(ru.typeOf[Int], PARAM_NAME, request).get
     }
   }
   
@@ -36,7 +36,7 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
     when(request.path).thenReturn("/method/10")
     
     intercept[IllegalParameterTypeException] {
-	  testObj.extractParam[NotSupportedType](PARAM_NAME, request)
+	  testObj.extractParam(ru.typeOf[NotSupportedType], PARAM_NAME, request)
     }
   }
 
@@ -45,7 +45,7 @@ class UrlParamExtractorSpec extends FlatSpec with Matchers  with MockitoSugar wi
     when(request.path).thenReturn("/method/10")
     
     assertResult(Option.empty) {
-	  testObj.extractParam[Int](OTHER_PARAM_NAME, request)
+	  testObj.extractParam(ru.typeOf[Int], OTHER_PARAM_NAME, request)
     }
   }
 }

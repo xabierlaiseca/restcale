@@ -10,14 +10,6 @@ class TypeTransformerSpec extends FlatSpec with Matchers {
     val testObj = new TypeTransformer
     
     assert{
-      testObj.supports[Int]
-    }
-  }
-  
-  "given a supported runtime type, supports" should "return true" in {
-    val testObj = new TypeTransformer
-    
-    assert{
       testObj.supports(ru.typeOf[Int])
     }
   }
@@ -26,19 +18,11 @@ class TypeTransformerSpec extends FlatSpec with Matchers {
     val testObj = new TypeTransformer
     
     assertResult(false){
-      testObj.supports[NotSupportedType]
-    }
-  }
-  
-  "given a not supported runtime type, supports" should "return false" in {
-    val testObj = new TypeTransformer
-    
-    assertResult(false){
       testObj.supports(ru.typeOf[NotSupportedType])
     }
   }
   
-  "given a String containing a Byte, transform with runtime type" should "return the Byte value" in {
+  "given a String containing a Byte, transform with type" should "return the Byte value" in {
     val testObj = new TypeTransformer
     
     assertResult(10.toByte) {
@@ -46,31 +30,15 @@ class TypeTransformerSpec extends FlatSpec with Matchers {
     }
   }
   
-  "given a String containing a Byte, transform" should "return the Byte value" in {
-    val testObj = new TypeTransformer
-    
-    assertResult(10.toByte) {
-      testObj.transform[Byte]("10").get
-    }
-  }
-  
   "given a String not containing a Byte, transform to Byte" should "throw an exception" in {
     val testObj = new TypeTransformer
 
     intercept[IllegalValueException] {
-      testObj.transform[Byte]("10a")
+      testObj.transform("10a", ru.typeOf[Byte])
     }
   }
   
-  "given a String containing a Short, transform" should "return the Short value" in {
-    val testObj = new TypeTransformer
-    
-    assertResult(10.toShort) {
-      testObj.transform[Short]("10").get
-    }
-  }
-  
-  "given a String containing a Short, transform with runtime type" should "return the Short value" in {
+  "given a String containing a Short, transform with type" should "return the Short value" in {
     val testObj = new TypeTransformer
     
     assertResult(10.toShort) {
@@ -82,19 +50,11 @@ class TypeTransformerSpec extends FlatSpec with Matchers {
     val testObj = new TypeTransformer
 
     intercept[IllegalValueException] {
-      testObj.transform[Short]("10a")
+      testObj.transform("10a", ru.typeOf[Short])
     }
   }
   
-  "given a String containing a Int, transform" should "return the Int value" in {
-    val testObj = new TypeTransformer
-    
-    assertResult(10) {
-      testObj.transform[Int]("10").get
-    }
-  }
-  
-   "given a String containing a Int, transform with runtime type" should "return the Int value" in {
+  "given a String containing a Int, transform with type" should "return the Int value" in {
     val testObj = new TypeTransformer
     
     assertResult(10) {
@@ -106,19 +66,11 @@ class TypeTransformerSpec extends FlatSpec with Matchers {
     val testObj = new TypeTransformer
 
     intercept[IllegalValueException] {
-      testObj.transform[Int]("10a")
+      testObj.transform("10a", ru.typeOf[Int])
     }
   }
   
-  "given a String containing a Long, transform" should "return the Long value" in {
-    val testObj = new TypeTransformer
-    
-    assertResult(10.toLong) {
-      testObj.transform[Long]("10").get
-    }
-  }
-  
-  "given a String containing a Long, transform with runtime type" should "return the Long value" in {
+  "given a String containing a Long, transform with type" should "return the Long value" in {
     val testObj = new TypeTransformer
     
     assertResult(10.toLong) {
@@ -130,19 +82,11 @@ class TypeTransformerSpec extends FlatSpec with Matchers {
     val testObj = new TypeTransformer
 
     intercept[IllegalValueException] {
-      testObj.transform[Long]("10a")
+      testObj.transform("10a", ru.typeOf[Long])
     }
   }
 
-  "given a String containing a Float, transform" should "return the Float value" in {
-    val testObj = new TypeTransformer
-    
-    assertResult(10.2.toFloat) {
-      testObj.transform[Float]("10.2").get
-    }
-  }
-  
-  "given a String containing a Float, transform with runtime type" should "return the Float value" in {
+  "given a String containing a Float, transform with type" should "return the Float value" in {
     val testObj = new TypeTransformer
     
     assertResult(10.2.toFloat) {
@@ -154,19 +98,11 @@ class TypeTransformerSpec extends FlatSpec with Matchers {
     val testObj = new TypeTransformer
 
     intercept[IllegalValueException] {
-      testObj.transform[Float]("10.2a")
+      testObj.transform("10.2a", ru.typeOf[Float])
     }
   }
   
-  "given a String containing a Double, transform" should "return the Double value" in {
-    val testObj = new TypeTransformer
-    
-    assertResult(10.2) {
-      testObj.transform[Double]("10.2").get
-    }
-  }
-  
-  "given a String containing a Double, transform with runtime type" should "return the Double value" in {
+  "given a String containing a Double, transform with type" should "return the Double value" in {
     val testObj = new TypeTransformer
     
     assertResult(10.2) {
@@ -178,19 +114,11 @@ class TypeTransformerSpec extends FlatSpec with Matchers {
     val testObj = new TypeTransformer
 
     intercept[IllegalValueException] {
-      testObj.transform[Double]("10.2a")
+      testObj.transform("10.2a", ru.typeOf[Double])
     }
   }
   
-  "given a String containing a Char, transform" should "return the Char value" in {
-    val testObj = new TypeTransformer
-    
-    assertResult('c') {
-      testObj.transform[Char]("c").get
-    }
-  }
-  
-  "given a String containing a Char, transform with runtime type" should "return the Char value" in {
+  "given a String containing a Char, transform with type" should "return the Char value" in {
     val testObj = new TypeTransformer
     
     assertResult('c') {
@@ -202,19 +130,11 @@ class TypeTransformerSpec extends FlatSpec with Matchers {
     val testObj = new TypeTransformer
 
     intercept[IllegalValueException] {
-      testObj.transform[Char]("cc")
+      testObj.transform("cc", ru.typeOf[Char])
     }
   }
   
-  "given a String containing a Boolean, transform" should "return the Boolean value" in {
-    val testObj = new TypeTransformer
-    
-    assertResult(true) {
-      testObj.transform[Boolean]("true").get
-    }
-  }
-  
-  "given a String containing a Boolean, transform with runtime type" should "return the Boolean value" in {
+  "given a String containing a Boolean, transform with type" should "return the Boolean value" in {
     val testObj = new TypeTransformer
     
     assertResult(true) {
@@ -226,15 +146,7 @@ class TypeTransformerSpec extends FlatSpec with Matchers {
     val testObj = new TypeTransformer
 
     intercept[IllegalValueException] {
-      testObj.transform[Boolean]("something")
-    }
-  }
-  
-  "given a String, transform to String" should "return the same value" in {
-    val testObj = new TypeTransformer
-    
-    assertResult("something") {
-      testObj.transform[String]("something").get
+      testObj.transform("something", ru.typeOf[Boolean])
     }
   }
   
@@ -250,7 +162,7 @@ class TypeTransformerSpec extends FlatSpec with Matchers {
     val testObj = new TypeTransformer
     
     assertResult(Option.empty) {
-      testObj.transform[NotSupportedType](null)
+      testObj.transform(null, ru.typeOf[NotSupportedType])
     }
   }
 }

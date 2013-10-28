@@ -4,13 +4,8 @@ import scala.reflect.runtime.{universe => ru}
 import scala.reflect.runtime.universe._
 
 class TypeTransformer {
-  def supports[T](implicit ttag: TypeTag[T]):Boolean = supports(ttag.tpe)
-  
   def supports(tpe: Type):Boolean = TypeTransformer.TYPE_TRANSFORMERS.contains(tpe)
   
-  def transform[T: ru.TypeTag](stringValue: String)(implicit ttag:TypeTag[T]):Option[T] =
-    Option.apply(transformValue(stringValue, ttag.tpe).asInstanceOf[T])
-    
   def transform(stringValue: String, tpe: Type):Option[Any] =
     Option.apply(transformValue(stringValue, tpe))
     

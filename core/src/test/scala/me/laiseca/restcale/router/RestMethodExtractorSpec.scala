@@ -16,10 +16,11 @@ class RestMethodExtractorSpec extends FlatSpec with Matchers with Inside {
     val methods = extractor.extract(List(service))
     
     assertResult(1)(methods.size)
-    inside(methods(0)){ case RestMethod(service, method, httpMethod, route) =>
+    inside(methods(0)){ case RestMethod(service, method, httpMethod, template, route) =>
       service should be (service)
       method should be (ru.typeOf[DefRestService].declaration(ru.newTermName("restMethodDef")).asMethod)
       httpMethod should be ("GET")
+      template should be ("/urla/:a")
       route should be (List(new FixedRouteSegment("urla"), WildcardRouteSegment))
     }
   }
@@ -32,10 +33,11 @@ class RestMethodExtractorSpec extends FlatSpec with Matchers with Inside {
     val methods = extractor.extract(List(service))
     
     assertResult(1)(methods.size)
-    inside(methods(0)){ case RestMethod(service, method, httpMethod, route) =>
+    inside(methods(0)){ case RestMethod(service, method, httpMethod, template, route) =>
       service should be (service)
       method should be (ru.typeOf[ValRestService].declaration(ru.newTermName("restMethodVal")).asMethod)
       httpMethod should be ("POST")
+      template should be ("/urlb/:a")
       route should be (List(new FixedRouteSegment("urlb"), WildcardRouteSegment))
     }
   }

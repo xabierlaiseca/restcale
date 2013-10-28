@@ -6,15 +6,15 @@ import me.laiseca.restcale.util.PathUtils
 import me.laiseca.restcale.http.HttpRequest
 
 trait ParamExtractor {
-  def extractParam[T:TypeTag](paramName:String, request:HttpRequest):Option[T]
+  def extractParam(tpe:Type, paramName:String, request:HttpRequest):Option[Any]
 }
 
 class UrlParamExtractor(val pathTemplate:String, typeTransformer:TypeTransformer) extends ParamExtractor {
-  override def extractParam[T:TypeTag](paramName:String, request:HttpRequest):Option[T] = {
+  override def extractParam(tpe: Type, paramName:String, request:HttpRequest):Option[Any] = {
     val paramStringValue = extractParamStringValue(request.path, paramName)
     if(paramStringValue.isDefined) {
-      if(typeTransformer.supports[T]) {
-        return typeTransformer.transform(paramStringValue.get)
+      if(typeTransformer.supports(tpe)) {
+        return typeTransformer.transform(paramStringValue.get, tpe)
       } else {
         throw new IllegalParameterTypeException(paramStringValue.get)
       }
@@ -38,59 +38,59 @@ class QueryParamExtractor(typeTransformer:TypeTransformer) extends ParamExtracto
   val iterableSymbol = ru.typeOf[Iterable[_]].typeSymbol
   val optionSymbol = ru.typeOf[Option[_]].typeSymbol
   
-  override def extractParam[T:TypeTag](paramName:String, request:HttpRequest):Option[T] = {
+  override def extractParam(tpe: Type, paramName:String, request:HttpRequest):Option[Any] = {
     val values = request.parameters.get(paramName)
     if(values.isDefined) {
-      if(isIterable[T]) {
-        extractIterable(values.get)
-      } else if (isOption[T]) {
-        extractOption(values.get)
+      if(isIterable(tpe)) {
+        extractIterable(tpe, values.get)
+      } else if (isOption(tpe)) {
+        extractOption(tpe, values.get)
       } else {
-        extractOther(values.get)
+        extractOther(tpe, values.get)
       }
     } else {
       Option.empty
     }
   }
   
-  private def isIterable[T:TypeTag](implicit ttag:TypeTag[T]) = {
-    ttag.tpe.baseClasses.contains(iterableSymbol)
+  private def isIterable(tpe:Type) = {
+    tpe.baseClasses.contains(iterableSymbol)
   }
   
-  private def isOption[T:TypeTag](implicit ttag:TypeTag[T]) = {
-    ttag.tpe.typeSymbol == optionSymbol
+  private def isOption(tpe:Type) = {
+    tpe.typeSymbol == optionSymbol
   }
   
-  private def extractIterable[T:TypeTag](values:List[String]):Option[T] = {
-    val arg = extractFirstArg[T]
+  private def extractIterable(tpe:Type, values:List[String]):Option[Any] = {
+    val arg = extractFirstArg(tpe)
     if(typeTransformer.supports(arg)) {
-      Option.apply(values.map(typeTransformer.transform(_, arg).get).asInstanceOf[T])
+      Option.apply(values.map(typeTransformer.transform(_, arg).get))
     } else {
       throw new IllegalParameterTypeException(values.toString)
     }
   }
   
-  private def extractOption[T:TypeTag](values:List[String]):Option[T] = {
+  private def extractOption(tpe:Type, values:List[String]):Option[Any] = {
     validateOnlyOneValue(values)
-    val arg = extractFirstArg[T]
+    val arg = extractFirstArg(tpe)
     if(typeTransformer.supports(arg)) {
-      Option.apply(typeTransformer.transform(values(0), arg).asInstanceOf[T])
+      Option.apply(typeTransformer.transform(values(0), arg))
     } else {
     	throw new IllegalParameterTypeException(values(0))
     }
   }
   
-  private def extractOther[T:TypeTag](values:List[String]):Option[T] = {
+  private def extractOther(tpe:Type, values:List[String]):Option[Any] = {
     validateOnlyOneValue(values)
-    if(typeTransformer.supports[T]) {
-      typeTransformer.transform[T](values(0))
+    if(typeTransformer.supports(tpe)) {
+      typeTransformer.transform(values(0), tpe)
     } else {
     	throw new IllegalParameterTypeException(values(0))
     }
   }
   
-  private def extractFirstArg[T](implicit ttag: TypeTag[T]) = {
-    val TypeRef(_,_,args) = ttag.tpe
+  private def extractFirstArg(tpe:Type) = {
+    val TypeRef(_,_,args) = tpe
     args(0)
   }
   
