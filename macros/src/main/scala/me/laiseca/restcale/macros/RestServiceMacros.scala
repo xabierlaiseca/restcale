@@ -7,7 +7,7 @@ import me.laiseca.restcale.http.HttpMethod
 import scala.collection.mutable.HashSet
 import scala.collection.mutable.Set
 import scala.collection.immutable.HashMap
-import me.laiseca.restcale.internal.function.RestFunction0
+import me.laiseca.restcale.internal.function.Argument
 
 object RestServiceMacros {
   
@@ -41,19 +41,17 @@ object RestServiceMacros {
     buildFunction(c)(f, path, HttpMethod.PUT)
   }
   
-  private def buildFunction[R](c: Context)(f:c.Expr[R], path:c.Expr[String], method: String) = {
+  private def buildFunction[R](c: Context)(expr:c.Expr[R], pathExpr:c.Expr[String], method: String) = {
     import c.universe._
-    
-    def basePath():String = {
-      val pathList = c.enclosingClass.collect {
-        case ValDef(_, name, TypeTree(), Literal(Constant(path:String))) => path
+
+    def validateIsFunction(expr:c.Expr[R]): Unit = {
+      expr match {
+        case Expr(Function(_)) => 
+        case _ => c.abort(c.enclosingPosition, "Parameter is not a function")
       }
-      
-      if (pathList.size > 0) pathList(0) else ""
     }
     
-    def validateUrl(pathExpr:c.Expr[String], method:String) = {
-      val Literal(Constant(relativePath:String)) = pathExpr.tree
+    def validateUrl(relativePath:String, method:String) = {
       val path = basePath + relativePath
       val pathPatterns = pathPatternsByMethod.getOrElse(method, null)
       val paramPattern = ":[^/]+".r
@@ -65,18 +63,60 @@ object RestServiceMacros {
         pathPatterns add pathPattern
       }
     }
-
-    validateUrl(path, method)
     
-    val TypeRef(thisType, _, args) = f.tree.tpe
+    def basePath():String = {
+      val pathList = c.enclosingClass.collect {
+        case ValDef(_, name, TypeTree(), Literal(Constant(path:String))) => path
+      }
+      
+      if (pathList.size > 0) pathList(0) else ""
+    }
+    
+    def buildParams(expr:c.Expr[R]) = {
+      def buildParam(valDef:ValDef) = {
+        val ValDef(_, name, tpe, _) = valDef
+
+        Apply(
+          Select(
+            New(TypeTree().setType(typeOf[Argument])),
+            newTermName(nme.CONSTRUCTOR.decoded)),
+          List(Literal(Constant(tpe.symbol.fullName)), Literal(Constant(name.decoded)))
+        )
+      }
+      
+      val Expr(Function(params,_)) = expr
+      
+      Apply(
+        TypeApply(
+          Select(
+            Ident(c.mirror.staticModule(classOf[List[_]].getName)),
+            newTermName("apply")),
+          List(Ident(typeOf[Argument].typeSymbol))),
+        params.map(elem => buildParam(elem))
+      )
+    }
+    
+    val Literal(Constant(relativePath:String)) = pathExpr.tree
+    
+    validateIsFunction(expr)
+    validateUrl(relativePath, method)
+    
+    val TypeRef(thisType, _, args) = expr.tree.tpe
     val clazz = c.mirror.staticClass(BASE_CLASS_NAME + (args.size - 1) )
     val clazzType = TypeRef(thisType, clazz , args)
-
-    c.Expr[BaseRestFunction](Apply(
-      Select(
-        New(TypeTree().setType(clazzType)),
-        newTermName(nme.CONSTRUCTOR.decoded)),
-      List(f.tree, Literal(Constant(method)), path.tree)))
+    
+    c.Expr[BaseRestFunction](
+      Apply(
+        Select(
+          New(TypeTree().setType(clazzType)),
+          newTermName(nme.CONSTRUCTOR.decoded)),
+        List(expr.tree,
+          Literal(Constant(method)),
+          Literal(Constant(basePath + relativePath)),
+          buildParams(expr)
+        )
+      )
+    )
   }
 }
 

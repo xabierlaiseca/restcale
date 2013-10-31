@@ -16,7 +16,8 @@ class RestFunction3Spec extends FlatSpec with Matchers with MockitoSugar {
 	  val function = mock[Function3[AnyRef,AnyRef,AnyRef,AnyRef]]
 	  val p1 = mock[AnyRef]; val p2 = mock[AnyRef]; val p3 = mock[AnyRef]
 	  
-	  val testObj = new RestFunction3(function, method, path)
+	  val arg = new Argument(classOf[AnyRef].getName, "arg")
+	  val testObj = new RestFunction3(function, method, path, List(arg, arg, arg))
 	  testObj.apply(p1, p2, p3)
 	  
 	  verify(function).apply(p1, p2, p3)

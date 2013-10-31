@@ -15,7 +15,7 @@ class RestFunction0Spec extends FlatSpec with Matchers with MockitoSugar {
   "Function0 wrapper" should "call the wrapped function" in {
 	  val function = mock[Function0[AnyRef]]
 	  
-	  val testObj = new RestFunction0(function, method, path)
+	  val testObj = new RestFunction0(function, method, path, List())
 	  testObj.apply()
 	  
 	  verify(function).apply()

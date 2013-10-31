@@ -20,7 +20,9 @@ class RestFunction15Spec extends FlatSpec with Matchers with MockitoSugar {
 	  val p9 = mock[AnyRef]; val p10 = mock[AnyRef]; val p11 = mock[AnyRef]; val p12 = mock[AnyRef]
 	  val p13 = mock[AnyRef]; val p14 = mock[AnyRef]; val p15 = mock[AnyRef]
 	  
-	  val testObj = new RestFunction15(function, method, path)
+	  val arg = new Argument(classOf[AnyRef].getName, "arg")
+	  val testObj = new RestFunction15(function, method, path, List(arg, arg, arg, arg, arg,
+	      arg, arg, arg, arg, arg, arg, arg, arg, arg, arg))
 	  testObj.apply(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15)
 	  
 	  verify(function).apply(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15)
