@@ -51,19 +51,6 @@ object RestServiceMacros {
       }
     }
     
-    def validateUrl(relativePath:String, method:String) = {
-      val path = basePath + relativePath
-      val pathPatterns = pathPatternsByMethod.getOrElse(method, null)
-      val paramPattern = ":[^/]+".r
-      val pathPattern = paramPattern.replaceAllIn(path, "<wildcard>")
-      
-      if(pathPatterns contains pathPattern) {
-        c.abort(c.enclosingPosition, "url pattern already defined")
-      } else {
-        pathPatterns add pathPattern
-      }
-    }
-    
     def basePath():String = {
       val pathList = c.enclosingClass.collect {
         case ValDef(_, name, TypeTree(), Literal(Constant(path:String))) => path
@@ -99,7 +86,6 @@ object RestServiceMacros {
     val Literal(Constant(relativePath:String)) = pathExpr.tree
     
     validateIsFunction(expr)
-    validateUrl(relativePath, method)
     
     val TypeRef(thisType, _, args) = expr.tree.tpe
     val clazz = c.mirror.staticClass(BASE_CLASS_NAME + (args.size - 1) )
@@ -112,7 +98,13 @@ object RestServiceMacros {
           newTermName(nme.CONSTRUCTOR.decoded)),
         List(expr.tree,
           Literal(Constant(method)),
-          Literal(Constant(basePath + relativePath)),
+          Apply(
+            Select(
+              Select(This(tpnme.EMPTY), newTermName("path")),
+              newTermName("$plus")
+            ),
+            List(pathExpr.tree)
+          ),
           buildParams(expr)
         )
       )
