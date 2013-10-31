@@ -15,9 +15,9 @@ import me.laiseca.restcale.http.HttpRequest
 class RouterSpec extends FlatSpec with Matchers with MockitoSugar {
 
   val restMethods = List(
-      new RestMethod(null, null, "GET", null, List(new FixedRouteSegment("method1"))),
-      new RestMethod(null, null, "POST", null, List(new FixedRouteSegment("method1"))),
-      new RestMethod(null, null, "GET", null, List(new FixedRouteSegment("method1"), WildcardRouteSegment))
+      new RestMethod(null, null, null, "GET", null, List(new FixedRouteSegment("method1"))),
+      new RestMethod(null, null, null, "POST", null, List(new FixedRouteSegment("method1"))),
+      new RestMethod(null, null, null, "GET", null, List(new FixedRouteSegment("method1"), WildcardRouteSegment))
   )
   
   "when the enpoint with fixed segments is called the router" should "delegate the call to the caller" in {

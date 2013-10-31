@@ -16,7 +16,7 @@ class RestMethodExtractorSpec extends FlatSpec with Matchers with Inside {
     val methods = extractor.extract(List(service))
     
     assertResult(1)(methods.size)
-    inside(methods(0)){ case RestMethod(service, method, httpMethod, template, route) =>
+    inside(methods(0)){ case RestMethod(service, method, _, httpMethod, template, route) =>
       service should be (service)
       method should be (ru.typeOf[DefRestService].declaration(ru.newTermName("restMethodDef")).asMethod)
       httpMethod should be ("GET")
@@ -33,7 +33,7 @@ class RestMethodExtractorSpec extends FlatSpec with Matchers with Inside {
     val methods = extractor.extract(List(service))
     
     assertResult(1)(methods.size)
-    inside(methods(0)){ case RestMethod(service, method, httpMethod, template, route) =>
+    inside(methods(0)){ case RestMethod(service, method, _, httpMethod, template, route) =>
       service should be (service)
       method should be (ru.typeOf[ValRestService].declaration(ru.newTermName("restMethodVal")).asMethod)
       httpMethod should be ("POST")

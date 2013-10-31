@@ -6,10 +6,31 @@ import me.laiseca.restcale.util.PathUtils
 import me.laiseca.restcale.http.HttpRequest
 
 trait ParamExtractor {
+  def extractParam(tpe:Type, paramName:String, request:HttpRequest):Any
+}
+
+class DefaultParamExtractor(httpMethod: String, pathTemplate: String) extends ParamExtractor {
+  val typeTransformer = new TypeTransformer
+  val extractors = List(new UrlParamExtractor(pathTemplate, typeTransformer), 
+        new QueryParamExtractor(typeTransformer))
+        
+  override def extractParam(tpe: Type, paramName:String, request:HttpRequest):Any = {
+    for(extractor <- extractors) {
+      val value = extractor.extractParam(tpe, paramName, request)
+      if(value.isDefined) {
+        return value.get
+      }
+    }
+    
+    throw new RuntimeException("Replace me!")
+  }
+}
+
+trait InternalParamExtractor {
   def extractParam(tpe:Type, paramName:String, request:HttpRequest):Option[Any]
 }
 
-class UrlParamExtractor(val pathTemplate:String, typeTransformer:TypeTransformer) extends ParamExtractor {
+class UrlParamExtractor(val pathTemplate:String, typeTransformer:TypeTransformer) extends InternalParamExtractor {
   override def extractParam(tpe: Type, paramName:String, request:HttpRequest):Option[Any] = {
     val paramStringValue = extractParamStringValue(request.path, paramName)
     if(paramStringValue.isDefined) {
@@ -34,7 +55,7 @@ class UrlParamExtractor(val pathTemplate:String, typeTransformer:TypeTransformer
   }
 }
 
-class QueryParamExtractor(typeTransformer:TypeTransformer) extends ParamExtractor {
+class QueryParamExtractor(typeTransformer:TypeTransformer) extends InternalParamExtractor {
   val iterableSymbol = ru.typeOf[Iterable[_]].typeSymbol
   val optionSymbol = ru.typeOf[Option[_]].typeSymbol
   
@@ -101,9 +122,9 @@ class QueryParamExtractor(typeTransformer:TypeTransformer) extends ParamExtracto
   }
 }
 
-object ParamExtractor {
-  def defaultUrlParamExtractor(pathTemplate:String): ParamExtractor =
-    new UrlParamExtractor(pathTemplate, new TypeTransformer)
-  
-  def defaultQueryParamExtractor(): ParamExtractor = new QueryParamExtractor(new TypeTransformer)
-}
+//object ParamExtractor {
+//  def defaultUrlParamExtractor(pathTemplate:String): ParamExtractor =
+//    new UrlParamExtractor(pathTemplate, new TypeTransformer)
+//  
+//  def defaultQueryParamExtractor(): ParamExtractor = new QueryParamExtractor(new TypeTransformer)
+//}

@@ -43,8 +43,8 @@ class RestMethodExtractor {
       val methodReflect = serviceReflect.reflectMethod(methodSymbol)
       val applied = methodReflect.apply()
       val restFunction = applied.asInstanceOf[BaseRestFunction]
-      new RestMethod(restService, methodSymbol, restFunction.httpMethod, 
-          restFunction.path, buildRoute(restFunction.path))
+      new RestMethod(restService, methodSymbol, restFunction.args,
+          restFunction.httpMethod, restFunction.path, buildRoute(restFunction.path))
     }
   }
 }

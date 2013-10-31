@@ -7,7 +7,7 @@ object Restcale {
 
   def main(args: Array[String]): Unit = {
 //    new HttpServer().run()
-    val extractor = ParamExtractor.defaultQueryParamExtractor
+//    val extractor = ParamExtractor.defaultQueryParamExtractor
 //    extractor.extractParam[List[Int]]("hola", null)
 //    extractor.extractParam[Option[Int]]("hola", null)
 //    extractor.extractParam[Int]("hola", null)
