@@ -15,12 +15,14 @@ object RestcaleBuild extends Build {
   
   val netty = "io.netty" % "netty-all" % "4.0.7.Final"
   val config = "com.typesafe" % "config" % "1.0.2"
+  val json4s = "org.json4s" % "json4s-native_2.10" % "3.2.5"
   val scalatest = "org.scalatest" % "scalatest_2.10" % "2.0.M6" % "test"
   val mockito = "org.mockito" % "mockito-core" % "1.9.5" % "test"
   
   lazy val coreDeps = Seq(
     netty,
     config,
+    json4s,
     scalatest,
     mockito
   )
