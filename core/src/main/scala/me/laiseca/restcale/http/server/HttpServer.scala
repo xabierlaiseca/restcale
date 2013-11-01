@@ -6,7 +6,7 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import me.laiseca.restcale.router.Router
 
-class HttpServer(val router:Router) extends Runnable {
+class HttpServer(private val router:Router) extends Runnable {
   
   def run():Unit = {
     val bossGroup = new NioEventLoopGroup()

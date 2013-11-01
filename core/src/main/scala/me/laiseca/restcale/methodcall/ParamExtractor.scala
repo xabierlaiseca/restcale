@@ -122,9 +122,21 @@ class QueryParamExtractor(typeTransformer:TypeTransformer) extends InternalParam
   }
 }
 
-//object ParamExtractor {
-//  def defaultUrlParamExtractor(pathTemplate:String): ParamExtractor =
-//    new UrlParamExtractor(pathTemplate, new TypeTransformer)
+//class BodyParamExtractor extends InternalParamExtractor {
+//  import org.json4s._
+//  import org.json4s.JsonDSL._
+//  import org.json4s.native.JsonMethods._
+//
+//  override def extractParam(tpe: Type, paramName:String, request:HttpRequest):Option[Any] = {
+//    request.method match {
+//      case "PATCH" | "POST" | "PUT" => extractParam(request) 
+//      case _ => Option.empty
+//    }
+//  }
 //  
-//  def defaultQueryParamExtractor(): ParamExtractor = new QueryParamExtractor(new TypeTransformer)
+//  private def extractParam(request:HttpRequest): Option[Any] = {
+//    val parsed = parse(request.body)
+//    native.Serialization.
+//    Option.empty
+//  }
 //}

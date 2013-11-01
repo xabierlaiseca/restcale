@@ -1,30 +1,26 @@
 package me.laiseca.restcale.http.server
 
-import io.netty.channel.SimpleChannelInboundHandler
-import io.netty.channel.ChannelHandlerContext
-import io.netty.handler.codec.http.HttpRequest
-import io.netty.handler.codec.http.HttpHeaders
-import io.netty.handler.codec.http.DefaultFullHttpResponse
-import io.netty.handler.codec.http.HttpVersion
-import io.netty.buffer.Unpooled
-import io.netty.handler.codec.http.HttpResponseStatus
 import io.netty.buffer.ByteBuf
-import io.netty.util.CharsetUtil
+import io.netty.buffer.Unpooled
 import io.netty.channel.ChannelFutureListener
+import io.netty.channel.ChannelHandlerContext
+import io.netty.channel.SimpleChannelInboundHandler
+import io.netty.handler.codec.http.DefaultFullHttpRequest
+import io.netty.handler.codec.http.DefaultFullHttpResponse
+import io.netty.handler.codec.http.HttpHeaders
+import io.netty.handler.codec.http.HttpResponseStatus
+import io.netty.handler.codec.http.HttpVersion
+import io.netty.util.CharsetUtil
 import me.laiseca.restcale.router.Router
+import io.netty.handler.codec.http.FullHttpRequest
 
 class HttpServerHandler(val router:Router) extends SimpleChannelInboundHandler[AnyRef] {
-	val CONTENT:ByteBuf = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(
-                "<html><head><title>Hello Netty & Scala World</title></head><body>Hello Netty & Scala World!!</body></html>",
-                CharsetUtil.UTF_8))
-  
 	override def channelReadComplete(ctx:ChannelHandlerContext):Unit = {
 		ctx.flush();
 	}
 
 	override protected def channelRead0(ctx:ChannelHandlerContext, msg:AnyRef): Unit = {
-		val request:HttpRequest = msg.asInstanceOf[HttpRequest]
-
+		val request:FullHttpRequest = msg.asInstanceOf[FullHttpRequest]
 		val keepAlive = HttpHeaders.isKeepAlive(request)
 		val content = router.route(new me.laiseca.restcale.http.HttpRequest(request))
 		val buffer = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer(content.toString, CharsetUtil.UTF_8))
