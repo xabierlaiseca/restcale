@@ -20,26 +20,20 @@ object RestServiceMacros {
   
   val BASE_CLASS_NAME = classOf[BaseRestFunction].getPackage().getName() + ".RestFunction"
   
-  def delete[R](c: Context)(path:c.Expr[String])(f:c.Expr[R]) = {
+  def delete[R](c: Context)(path:c.Expr[String])(f:c.Expr[R]) =
     buildFunction(c)(f, path, HttpMethod.DELETE)
-  }
-  def get[R](c: Context)(path:c.Expr[String])(f:c.Expr[R]) = {
+
+  def get[R](c: Context)(path:c.Expr[String])(f:c.Expr[R]) =
     buildFunction(c)(f, path, HttpMethod.GET)
-  }
   
-  def patch[R](c: Context)(path:c.Expr[String])(f:c.Expr[R]) = {
+  def patch[R](c: Context)(path:c.Expr[String])(f:c.Expr[R]) =
     buildFunction(c)(f, path, HttpMethod.PATCH)
-  }
   
-  def post[R: c.WeakTypeTag](c: Context)
-  	  (path:c.Expr[String])(f:c.Expr[R]) = {
+  def post[R: c.WeakTypeTag](c: Context) (path:c.Expr[String])(f:c.Expr[R]) = 
     buildFunction(c)(f, path, HttpMethod.POST)
-  }
   
-  def put[R: c.WeakTypeTag](c: Context)
-  	  (path:c.Expr[String])(f:c.Expr[R]) = {
+  def put[R: c.WeakTypeTag](c: Context)(path:c.Expr[String])(f:c.Expr[R]) =
     buildFunction(c)(f, path, HttpMethod.PUT)
-  }
   
   private def buildFunction[R](c: Context)(expr:c.Expr[R], pathExpr:c.Expr[String], method: String) = {
     import c.universe._

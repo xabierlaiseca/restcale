@@ -37,6 +37,8 @@ class RestServiceMacrosSpec extends FlatSpec with Matchers {
   private def post[A](path:String)(f: => A) = macro RestServiceMacros.post[A]
   private def put[A](path:String)(f: => A) = macro RestServiceMacros.put[A]
   
+  val path = ""
+  
   "the macro with 0 parameters function" should "create a RestFunction0 with the given data" in {
     def method = get("/path0") { () =>
       new R()
