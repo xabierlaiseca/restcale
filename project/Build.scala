@@ -1,3 +1,5 @@
+import sbtassembly.Plugin._ 
+import AssemblyKeys._
 import sbt._
 import Keys._
 
@@ -67,6 +69,6 @@ object RestcaleBuild extends Build {
   lazy val example: Project = Project(
     "example",
     file("example"),
-    settings = buildSettings
+    settings = buildSettings ++ assemblySettings
   ) dependsOn(core)
 }
