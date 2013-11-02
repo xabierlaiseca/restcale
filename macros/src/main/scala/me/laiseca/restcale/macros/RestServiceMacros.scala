@@ -8,6 +8,8 @@ import scala.collection.mutable.HashSet
 import scala.collection.mutable.Set
 import scala.collection.immutable.HashMap
 import me.laiseca.restcale.internal.function.Argument
+import me.laiseca.restcale.internal.function.TypeParameter
+import me.laiseca.restcale.internal.function.TypeParameter
 
 object RestServiceMacros {
   
@@ -45,36 +47,50 @@ object RestServiceMacros {
       }
     }
     
-    def basePath():String = {
-      val pathList = c.enclosingClass.collect {
-        case ValDef(_, name, TypeTree(), Literal(Constant(path:String))) => path
+    def buildParams(expr:c.Expr[R]) = {
+      def buildList[T:TypeTag](elems:List[Tree]) = {
+        Apply(
+          TypeApply(
+            Select(
+              Ident(c.mirror.staticModule(classOf[List[_]].getName)),
+              newTermName("apply")),
+            List(Ident(typeOf[T].typeSymbol))), elems
+        )
       }
       
-      if (pathList.size > 0) pathList(0) else ""
-    }
-    
-    def buildParams(expr:c.Expr[R]) = {
-      def buildParam(valDef:ValDef) = {
-        val ValDef(_, name, tpe, _) = valDef
+      def buildTypeParameter(typeParam: Type):Tree = {
+        val TypeRef(_,_,subTypeParams) = typeParam
+        Apply(
+          Select(
+            New(TypeTree().setType(typeOf[TypeParameter])),
+            newTermName(nme.CONSTRUCTOR.decoded)),
+          List(
+            Literal(Constant(typeParam.typeSymbol.fullName)),
+            buildList[TypeParameter](subTypeParams.map(subTypeParam => buildTypeParameter(subTypeParam)))
+          )
+        )
+      }
+      
+      def buildParam(valDef:ValDef):Tree = {
+        val ValDef(a1, name, tpeTree, a2) = valDef
 
+        val TypeRef(_,_,typeParams) = tpeTree.tpe
+        
         Apply(
           Select(
             New(TypeTree().setType(typeOf[Argument])),
             newTermName(nme.CONSTRUCTOR.decoded)),
-          List(Literal(Constant(tpe.symbol.fullName)), Literal(Constant(name.decoded)))
+          List(
+            Literal(Constant(tpeTree.symbol.fullName)),
+            buildList[TypeParameter](typeParams.map(typeParam => buildTypeParameter(typeParam))),
+            Literal(Constant(name.decoded))
+          )
         )
       }
       
       val Expr(Function(params,_)) = expr
       
-      Apply(
-        TypeApply(
-          Select(
-            Ident(c.mirror.staticModule(classOf[List[_]].getName)),
-            newTermName("apply")),
-          List(Ident(typeOf[Argument].typeSymbol))),
-        params.map(elem => buildParam(elem))
-      )
+      buildList[Argument](params.map(elem => buildParam(elem)))
     }
     
     val Literal(Constant(relativePath:String)) = pathExpr.tree

@@ -41,6 +41,7 @@ private object TypeTransformer {
       }
     }),
     ru.typeTag[String].tpe -> ((value:String) => value),
+    ru.typeTag[java.lang.String].tpe -> ((value:String) => value),
     ru.typeTag[Boolean].tpe -> ((value:String) => value.toBoolean)
   )
 }

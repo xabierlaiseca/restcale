@@ -25,11 +25,8 @@ class DefaultMethodCaller(factory:ParamExtractorFactory) extends MethodCaller {
   
   private def extractParameters(arguments: List[Argument],
       extractor:ParamExtractor, request:HttpRequest):List[Any] = {
-    val mirror = ru.runtimeMirror(getClass.getClassLoader)
     for(argument <- arguments) yield {
-      val clazz = Class.forName(argument.tpe)
-      val classSymbol = mirror.classSymbol(clazz)
-      extractor.extractParam(classSymbol.toType, argument.name, request)
+      extractor.extractParam(argument, request)
     }
   }
   

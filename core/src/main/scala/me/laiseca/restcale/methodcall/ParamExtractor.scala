@@ -4,19 +4,41 @@ import scala.reflect.runtime.{universe => ru}
 import scala.reflect.runtime.universe._
 import me.laiseca.restcale.util.PathUtils
 import me.laiseca.restcale.http.HttpRequest
+import me.laiseca.restcale.internal.function.Argument
+import me.laiseca.restcale.internal.function.TypeParameter
 
 trait ParamExtractor {
-  def extractParam(tpe:Type, paramName:String, request:HttpRequest):Any
+  def extractParam(arg:Argument, request:HttpRequest):Any
 }
 
 class DefaultParamExtractor(httpMethod: String, pathTemplate: String) extends ParamExtractor {
-  val typeTransformer = new TypeTransformer
-  val extractors = List(new UrlParamExtractor(pathTemplate, typeTransformer), 
+  private val typeTransformer = new TypeTransformer
+  private val extractors = List(new UrlParamExtractor(pathTemplate, typeTransformer), 
         new QueryParamExtractor(typeTransformer))
-        
-  override def extractParam(tpe: Type, paramName:String, request:HttpRequest):Any = {
+  private val mirror = ru.runtimeMirror(getClass.getClassLoader)
+ 
+  private def buildType(arg:Argument):Type = {
+    def typeOf(tpeName:String):Type = {
+      val clazz = Class.forName(tpeName)
+      val classSymbol = mirror.classSymbol(clazz)
+      classSymbol.toType
+    }
+    
+    def buildTypeParam(typeParam: TypeParameter):Type = {
+      val TypeRef(p, s, _) = typeOf(typeParam.tpe)
+      TypeRef(p, s, typeParam.typeParams.map(subTypeParam => buildTypeParam(subTypeParam)))
+    }
+    
+    val TypeRef(pre, sym, _) = typeOf(arg.tpe)
+    val sub = arg.tpeParams.map(tpeParam => buildTypeParam(tpeParam))
+    TypeRef(pre, sym, sub)
+  }
+  
+  override def extractParam(arg:Argument, request:HttpRequest):Any = {
+    val tpe = buildType(arg)
+      
     for(extractor <- extractors) {
-      val value = extractor.extractParam(tpe, paramName, request)
+      val value = extractor.extractParam(tpe, arg.name, request)
       if(value.isDefined) {
         return value.get
       }

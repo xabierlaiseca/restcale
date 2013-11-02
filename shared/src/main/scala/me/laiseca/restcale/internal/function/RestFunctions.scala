@@ -1,6 +1,8 @@
 package me.laiseca.restcale.internal.function
 
-case class Argument(val tpe:String, name:String)
+case class Argument(val tpe:String, val tpeParams:List[TypeParameter], val name:String)
+
+case class TypeParameter(val tpe:String, val typeParams:List[TypeParameter])
 
 abstract class BaseRestFunction(val httpMethod:String, val path:String, val args:List[Argument])
 
