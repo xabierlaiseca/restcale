@@ -16,7 +16,8 @@ class RestFunction4Spec extends FlatSpec with Matchers with MockitoSugar {
 	  val function = mock[Function4[AnyRef,AnyRef,AnyRef,AnyRef,AnyRef]]
 	  val p1 = mock[AnyRef]; val p2 = mock[AnyRef]; val p3 = mock[AnyRef]; val p4 = mock[AnyRef]
 	  
-	  val arg = new Argument(classOf[AnyRef].getName, "arg")
+	  val typeParam = new TypeParameter(classOf[String].getName(), List())
+	  val arg = new Argument(classOf[AnyRef].getName, List(typeParam), "arg")
 	  val testObj = new RestFunction4(function, method, path, List(arg, arg, arg, arg))
 	  testObj.apply(p1, p2, p3, p4)
 	  

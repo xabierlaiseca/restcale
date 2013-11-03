@@ -120,7 +120,6 @@ class QueryParamExtractor(typeTransformer:TypeTransformer) extends InternalParam
   
   private def extractOption(tpe:Type, values:List[String]):Option[Any] = {
     validateOnlyOneValue(values)
-    println(showRaw(values))
     val arg = extractFirstArg(tpe)
     if(typeTransformer.supports(arg)) {
       Option.apply(typeTransformer.transform(values(0), arg))
